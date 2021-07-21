@@ -15,7 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @Data
 @NoArgsConstructor
 @Builder
-public class EmailConfirmation {
+public class EmailConfirmationRequest {
     @NotBlank
     private String userid;
     @NotEmpty
