@@ -14,4 +14,8 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 public class GenericAccountResponse extends BaseResponse {
     private AccountDto account;
+
+    public GenericAccountResponse(AccountDto account) {
+        this.account = account;
+    }
 }
