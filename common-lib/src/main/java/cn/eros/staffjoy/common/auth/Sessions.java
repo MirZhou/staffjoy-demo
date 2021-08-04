@@ -49,4 +49,13 @@ public class Sessions {
             .findAny()
             .map(Cookie::getValue).orElse(null);
     }
+
+    public static void logout(String externalApex, HttpServletResponse response) {
+        Cookie cookie = new Cookie(AuthConstant.COOKIE_NAME, "");
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setDomain(externalApex);
+
+        response.addCookie(cookie);
+    }
 }
