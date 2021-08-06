@@ -29,11 +29,11 @@ import java.util.Set;
  */
 @RestControllerAdvice
 public class GlobalExceptionTranslator {
-    static final ILogger logger = SLoggerFactory.getLogger(GlobalExceptionTranslator.class);
+    static final ILogger LOGGER = SLoggerFactory.getLogger(GlobalExceptionTranslator.class);
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public BaseResponse handleError(MissingServletRequestParameterException e) {
-        logger.warn("Missing Request Parameter", e);
+        LOGGER.warn("Missing Request Parameter", e);
 
         String message = String.format("Missing Request Parameter: %s", e.getParameterName());
 
@@ -45,7 +45,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public BaseResponse handleError(MethodArgumentTypeMismatchException e) {
-        logger.warn("Method Argument Type Mismatch", e);
+        LOGGER.warn("Method Argument Type Mismatch", e);
 
         String message = String.format("Method Argument Type Mismatch: %s", e.getName());
 
@@ -57,7 +57,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse handleError(MethodArgumentNotValidException e) {
-        logger.warn("Method Argument Not Valid", e);
+        LOGGER.warn("Method Argument Not Valid", e);
 
         BindingResult bindingResult = e.getBindingResult();
         FieldError error = bindingResult.getFieldError();
@@ -71,7 +71,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(BindException.class)
     public BaseResponse handleError(BindException e) {
-        logger.warn("Bind Exception", e);
+        LOGGER.warn("Bind Exception", e);
 
         FieldError error = e.getFieldError();
         String message = String.format("%s:%s", error.getField(), error.getDefaultMessage());
@@ -85,7 +85,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public BaseResponse handleError(ConstraintViolationException e) {
-        logger.warn("Constraint Violation", e);
+        LOGGER.warn("Constraint Violation", e);
 
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         ConstraintViolation<?> violation = violations.iterator().next();
@@ -101,7 +101,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public BaseResponse handleError(NoHandlerFoundException e) {
-        logger.error("404 Not Found", e);
+        LOGGER.error("404 Not Found", e);
 
         return BaseResponse
             .builder()
@@ -112,7 +112,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public BaseResponse handleError(HttpMessageNotReadableException e) {
-        logger.error("Message Not Readable", e);
+        LOGGER.error("Message Not Readable", e);
 
         return BaseResponse
             .builder()
@@ -123,7 +123,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public BaseResponse handleError(HttpRequestMethodNotSupportedException e) {
-        logger.error("Request Method Not Supported", e);
+        LOGGER.error("Request Method Not Supported", e);
 
         return BaseResponse
             .builder()
@@ -134,7 +134,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public BaseResponse handleError(HttpMediaTypeNotSupportedException e) {
-        logger.error("Media Type Not Supported", e);
+        LOGGER.error("Media Type Not Supported", e);
 
         return BaseResponse
             .builder()
@@ -145,7 +145,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(ServiceException.class)
     public BaseResponse handleError(ServiceException e) {
-        logger.error("Service Exception", e);
+        LOGGER.error("Service Exception", e);
 
         return BaseResponse
             .builder()
@@ -156,7 +156,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(PermissionDeniedException.class)
     public BaseResponse handleError(PermissionDeniedException e) {
-        logger.error("Permission Denied", e);
+        LOGGER.error("Permission Denied", e);
 
         return BaseResponse
             .builder()
@@ -167,7 +167,7 @@ public class GlobalExceptionTranslator {
 
     @ExceptionHandler(Throwable.class)
     public BaseResponse handleError(Throwable e) {
-        logger.error("Internal Server Error", e);
+        LOGGER.error("Internal Server Error", e);
 
         return BaseResponse
             .builder()
