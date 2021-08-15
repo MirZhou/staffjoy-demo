@@ -1,10 +1,7 @@
 package cn.eros.staffjoy.account.dto;
 
 import cn.eros.staffjoy.common.api.BaseResponse;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author 周光兵
@@ -14,6 +11,7 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class ListAccountResponse extends BaseResponse {
     private AccountList accountList;
 }
