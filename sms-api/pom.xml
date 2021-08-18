@@ -14,4 +14,11 @@
     <name>sms-api</name>
     <version>1.0.0</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>common-lib</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
