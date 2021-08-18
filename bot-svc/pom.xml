@@ -17,7 +17,23 @@
     <dependencies>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
-            <artifactId>common-lib</artifactId>
+            <artifactId>bot-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>account-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>company-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>mail-api</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
