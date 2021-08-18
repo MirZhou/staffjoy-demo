@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author Eros
  */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
-@EnableFeignClients({"cn.eros.staffjoy.account", "cn.eros.staffjoy.company", "cn.eros.staffjoy.mail"})
+@EnableFeignClients({"cn.eros.staffjoy.account", "cn.eros.staffjoy.company", "cn.eros.staffjoy.mail", "cn.eros.staffjoy.sms"})
 public class BotApplication {
     public static void main(String[] args) {
         SpringApplication.run(BotApplication.class, args);
