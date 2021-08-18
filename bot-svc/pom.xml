@@ -35,6 +35,11 @@
             <artifactId>mail-api</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>sms-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
