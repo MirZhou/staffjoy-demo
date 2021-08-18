@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @date 2021/8/6 17:09
  */
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"cn.eros.staffjoy.company", "cn.eros.staffjoy.bot", "cn.eros.staffjoy.mail"})
 public class AccountApplication {
     public static void main(String[] args) {
         SpringApplication.run(AccountApplication.class, args);
