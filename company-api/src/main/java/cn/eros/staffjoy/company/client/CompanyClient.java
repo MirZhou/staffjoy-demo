@@ -2,13 +2,10 @@ package cn.eros.staffjoy.company.client;
 
 import cn.eros.staffjoy.common.auth.AuthConstant;
 import cn.eros.staffjoy.company.CompanyConstant;
-import cn.eros.staffjoy.company.dto.GenericCompanyResponse;
-import cn.eros.staffjoy.company.dto.GetAdminOfResponse;
-import cn.eros.staffjoy.company.dto.GetWorkerOfResponse;
+import cn.eros.staffjoy.company.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author 周光兵
@@ -24,4 +21,25 @@ public interface CompanyClient {
 
     @GetMapping("/admin/admin_of")
     GetAdminOfResponse getAdminOf(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz, @RequestParam String userid);
+
+    // Team Apis
+
+    @GetMapping("/team/get")
+    GenericTeamResponse getTeam(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz,
+                                @RequestParam String companyId,
+                                @RequestParam String teamId);
+
+    // Job Apis
+
+    @GetMapping("/job/get")
+    GenericJobResponse getJob(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz,
+                              @RequestParam String jobId,
+                              @RequestParam String companyId,
+                              @RequestParam String teamId);
+
+    // Shift Apis
+
+    @PostMapping("/shift/list_worker_shifts")
+    GenericShiftListResponse listWorkerShifts(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz,
+                                              @RequestBody @Validated WorkerShiftListRequest request);
 }

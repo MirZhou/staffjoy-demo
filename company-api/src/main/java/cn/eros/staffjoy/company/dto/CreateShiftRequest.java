@@ -9,20 +9,19 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-
-import static cn.eros.staffjoy.company.dto.CreateShiftRequest.MAX_SHIFT_DURATION;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 周光兵
- * @date 2021/8/19 13:51
+ * @date 2021/8/19 22:29
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
-public class ShiftDto {
-    @NotBlank
-    private String id;
+@Builder
+public class CreateShiftRequest {
+    protected static final long MAX_SHIFT_DURATION = TimeUnit.HOURS.toMillis(23L);
+
     @NotBlank
     private String companyId;
     @NotBlank
@@ -31,14 +30,17 @@ public class ShiftDto {
     private Instant start;
     @NotNull
     private Instant stop;
-    private String userId;
-    private String jobId;
+    @Builder.Default
+    private String userId = "";
+    @Builder.Default
+    private String jobId = "";
     @NotNull
     private boolean published;
 
     @AssertTrue(message = "stop must be after start")
-    private boolean stopIsAfterStart() {
+    private boolean shopIsAfterStart() {
         long duration = stop.toEpochMilli() - start.toEpochMilli();
+
         return duration > 0;
     }
 
@@ -48,4 +50,5 @@ public class ShiftDto {
 
         return duration <= MAX_SHIFT_DURATION;
     }
+
 }
