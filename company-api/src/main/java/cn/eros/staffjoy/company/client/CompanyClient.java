@@ -57,7 +57,8 @@ public interface CompanyClient {
                              @RequestBody @Valid DirectoryEntryRequest request);
 
     @GetMapping("/admin/admin_of")
-    GetAdminOfResponse getAdminOf(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz, @RequestParam String userid);
+    GetAdminOfResponse getAdminOf(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz,
+                                  @RequestParam String userid);
 
     // Directory Apis
 
@@ -108,7 +109,8 @@ public interface CompanyClient {
                               @RequestBody @Validated WorkerDto workerDto);
 
     @GetMapping("/worker/get_worker_of")
-    GetWorkerOfResponse getWorkerOf(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz, @RequestParam String userid);
+    GetWorkerOfResponse getWorkerOf(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String authz,
+                                    @RequestParam String userid);
 
     // Team Apis
 

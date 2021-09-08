@@ -1,7 +1,11 @@
 package cn.eros.staffjoy.company.dto;
 
 import cn.eros.staffjoy.common.api.BaseResponse;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author 周光兵
@@ -11,7 +15,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class ListWorkerResponse extends BaseResponse {
     private WorkerEntries workerEntries;
 }

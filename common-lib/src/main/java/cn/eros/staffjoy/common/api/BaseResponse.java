@@ -1,8 +1,10 @@
 package cn.eros.staffjoy.common.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author 周光兵
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
+@SuperBuilder
 public class BaseResponse {
     private String message;
     @Builder.Default

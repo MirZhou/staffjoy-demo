@@ -14,6 +14,8 @@ import cn.eros.staffjoy.faraday.exceptions.ForbiddenException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.structlog4j.ILogger;
 import com.github.structlog4j.SLoggerFactory;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +32,7 @@ import java.util.Map;
  * @date 2021/8/3 13:21
  */
 public class AuthRequestInterceptor implements PreForwardRequestInterceptor {
-    private final static ILogger LOGGER = SLoggerFactory.getLogger(AuthRequestInterceptor.class);
+    private static final ILogger LOGGER = SLoggerFactory.getLogger(AuthRequestInterceptor.class);
 
     private final String signingSecret;
     private final EnvConfig envConfig;
@@ -178,6 +180,7 @@ public class AuthRequestInterceptor implements PreForwardRequestInterceptor {
     @Data
     @Builder
     @NoArgsConstructor
+    @AllArgsConstructor
     private static class Session {
         private String userid;
         private boolean support;

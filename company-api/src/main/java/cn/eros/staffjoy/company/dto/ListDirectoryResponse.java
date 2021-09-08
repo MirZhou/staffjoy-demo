@@ -2,6 +2,7 @@ package cn.eros.staffjoy.company.dto;
 
 import cn.eros.staffjoy.common.api.BaseResponse;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 /**
  * @author 周光兵
@@ -11,7 +12,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class ListDirectoryResponse extends BaseResponse {
     private DirectoryList directoryList;
 }
