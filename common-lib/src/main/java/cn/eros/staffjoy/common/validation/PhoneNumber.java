@@ -1,6 +1,8 @@
 package cn.eros.staffjoy.common.validation;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,7 +16,7 @@ import java.lang.annotation.*;
 public @interface PhoneNumber {
     String message() default "Invalid phone number";
 
-    Class[] groups() default {};
+    Class<?>[] groups() default {};
 
-    Class[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }

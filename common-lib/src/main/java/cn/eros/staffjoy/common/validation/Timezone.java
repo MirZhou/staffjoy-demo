@@ -1,6 +1,9 @@
 package cn.eros.staffjoy.common.validation;
 
 import javax.validation.Constraint;
+
+import com.auth0.jwt.interfaces.Payload;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,7 +17,7 @@ import java.lang.annotation.*;
 public @interface Timezone {
     String message() default "Invalid timezone";
 
-    Class[] groups() default {};
+    Class<?>[] groups() default {};
 
-    Class[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 }
