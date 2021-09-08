@@ -5,6 +5,7 @@ import cn.eros.staffjoy.common.auth.AuthContext;
 import cn.eros.staffjoy.common.auth.Authorize;
 import cn.eros.staffjoy.company.dto.DirectoryEntryDto;
 import cn.eros.staffjoy.company.dto.GenericDirectoryResponse;
+import cn.eros.staffjoy.company.dto.GetAssociationResponse;
 import cn.eros.staffjoy.company.dto.ListDirectoryResponse;
 import cn.eros.staffjoy.company.dto.NewDirectoryEntry;
 import cn.eros.staffjoy.company.service.DirectoryService;
@@ -28,11 +29,8 @@ public class DirectoryController {
     private PermissionService permissionService;
 
     @PostMapping("/create")
-    @Authorize({
-        AuthConstant.AUTHORIZATION_AUTHENTICATED_USER,
-        AuthConstant.AUTHORIZATION_SUPPORT_USER,
-        AuthConstant.AUTHORIZATION_WWW_SERVICE
-    })
+    @Authorize({ AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, AuthConstant.AUTHORIZATION_SUPPORT_USER,
+            AuthConstant.AUTHORIZATION_WWW_SERVICE })
     public GenericDirectoryResponse createDirectory(@RequestBody @Validated NewDirectoryEntry request) {
         if (AuthConstant.AUTHORIZATION_AUTHENTICATED_USER.equals(AuthContext.getAuthz())) {
             this.permissionService.checkPermissionCompanyAdmin(request.getCompanyId());
@@ -42,13 +40,9 @@ public class DirectoryController {
     }
 
     @GetMapping("/list")
-    @Authorize({
-        AuthConstant.AUTHORIZATION_AUTHENTICATED_USER,
-        AuthConstant.AUTHORIZATION_SUPPORT_USER
-    })
+    @Authorize({ AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, AuthConstant.AUTHORIZATION_SUPPORT_USER })
     public ListDirectoryResponse listDirectories(@RequestParam String companyId,
-                                                 @RequestParam(defaultValue = "0") int offset,
-                                                 @RequestParam(defaultValue = "0") int limit) {
+            @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "0") int limit) {
         if (AuthConstant.AUTHORIZATION_AUTHENTICATED_USER.equals(AuthContext.getAuthz())) {
             this.permissionService.checkPermissionCompanyAdmin(companyId);
         }
@@ -57,14 +51,9 @@ public class DirectoryController {
     }
 
     @GetMapping("/get")
-    @Authorize({
-        AuthConstant.AUTHORIZATION_AUTHENTICATED_USER,
-        AuthConstant.AUTHORIZATION_SUPPORT_USER,
-        AuthConstant.AUTHORIZATION_WHOAMI_SERVICE,
-        AuthConstant.AUTHORIZATION_WWW_SERVICE
-    })
-    public GenericDirectoryResponse getDirectoryEntry(@RequestParam String companyId,
-                                                      @RequestParam String userId) {
+    @Authorize({ AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, AuthConstant.AUTHORIZATION_SUPPORT_USER,
+            AuthConstant.AUTHORIZATION_WHOAMI_SERVICE, AuthConstant.AUTHORIZATION_WWW_SERVICE })
+    public GenericDirectoryResponse getDirectoryEntry(@RequestParam String companyId, @RequestParam String userId) {
         if (AuthConstant.AUTHORIZATION_AUTHENTICATED_USER.equals(AuthContext.getAuthz())) {
             // user can access their own entry
             if (!userId.equals(AuthContext.getUserId())) {
@@ -76,15 +65,23 @@ public class DirectoryController {
     }
 
     @PutMapping("/update")
-    @Authorize({
-        AuthConstant.AUTHORIZATION_AUTHENTICATED_USER,
-        AuthConstant.AUTHORIZATION_SUPPORT_USER
-    })
+    @Authorize({ AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, AuthConstant.AUTHORIZATION_SUPPORT_USER })
     public GenericDirectoryResponse updateDirectoryEntry(@RequestBody @Validated DirectoryEntryDto request) {
         if (AuthConstant.AUTHORIZATION_AUTHENTICATED_USER.equals(AuthContext.getAuthz())) {
             this.permissionService.checkPermissionCompanyAdmin(request.getCompanyId());
         }
 
         return new GenericDirectoryResponse(this.directoryService.updateDirectoryEntry(request));
+    }
+
+    @GetMapping("/get_associations")
+    @Authorize({ AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, AuthConstant.AUTHORIZATION_SUPPORT_USER })
+    public GetAssociationResponse getAssociations(@RequestParam String companyId,
+            @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "0") int limit) {
+        if (AuthConstant.AUTHORIZATION_AUTHENTICATED_USER.equals(AuthContext.getAuthz())) {
+            this.permissionService.checkPermissionCompanyAdmin(companyId);
+        }
+
+        return new GetAssociationResponse(this.directoryService.getAssociations(companyId, offset, limit));
     }
 }
