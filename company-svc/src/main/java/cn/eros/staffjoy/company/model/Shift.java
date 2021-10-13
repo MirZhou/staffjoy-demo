@@ -29,5 +29,6 @@ public class Shift {
     private Instant start;
     private Instant stop;
     private String userId;
+    private String jobId;
     private boolean published;
 }

@@ -1,10 +1,7 @@
 package cn.eros.staffjoy.company.dto;
 
 import cn.eros.staffjoy.common.api.BaseResponse;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * @author 周光兵
@@ -14,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class GenericJobResponse extends BaseResponse {
     private JobDto job;
 }
