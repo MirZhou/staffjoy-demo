@@ -12,6 +12,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class FindWhoAmiResponse extends BaseResponse {
+public class FindWhoAmIResponse extends BaseResponse {
     private IAmDto iAm;
 }
