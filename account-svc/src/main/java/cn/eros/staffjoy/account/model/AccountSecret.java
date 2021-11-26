@@ -24,6 +24,6 @@ public class AccountSecret {
     @Id
     private String id;
     private String email;
-    private boolean confirmAndActive;
+    private boolean confirmedAndActive;
     private String passwordHash;
 }

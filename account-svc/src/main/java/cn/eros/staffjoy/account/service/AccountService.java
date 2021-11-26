@@ -282,7 +282,7 @@ public class AccountService {
             throw new ServiceException(ResultCode.NOT_FOUND, "account with specified email not found");
         }
 
-        if (!accountSecret.isConfirmAndActive()) {
+        if (!accountSecret.isConfirmedAndActive()) {
             throw new ServiceException(ResultCode.REQ_REJECT, "This user has not confirmed their account");
         }
 
@@ -419,10 +419,10 @@ public class AccountService {
         String htmlBody;
         if (activateOrConfirm) {
             // active or confirm
-            htmlBody = String.format(template, name, link.toString(), link.toString(), link.toString());
+            htmlBody = String.format(template, name, link, link, link);
         } else {
             // reset
-            htmlBody = String.format(template, link.toString(), link.toString());
+            htmlBody = String.format(template, link, link);
         }
 
         EmailRequest emailRequest = EmailRequest.builder()

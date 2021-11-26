@@ -19,7 +19,7 @@ public interface AccountRepo extends JpaRepository<Account, String> {
     Account findAccountByPhoneNumber(String phoneNumber);
 
     @Modifying(clearAutomatically = true)
-    @Query("update Account account set account.email = :email, account.confirmedAndActive = true where account.id = id")
+    @Query("update Account account set account.email = :email, account.confirmedAndActive = true where account.id = :id")
     @Transactional
     int updateEmailAndActivateById(@Param("email") String email, @Param("id") String id);
 }
