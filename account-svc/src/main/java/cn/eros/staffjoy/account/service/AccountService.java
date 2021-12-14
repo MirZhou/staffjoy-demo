@@ -126,10 +126,11 @@ public class AccountService {
         }
 
         Account account = Account.builder()
-                .name(name)
-                .email(email)
-                .phoneNumber(phoneNumber)
-                .build();
+            .name(name)
+            .email(email)
+            .phoneNumber(phoneNumber)
+            .build();
+        account.setPhotoUrl(Helper.generateGravatarUrl(account.getEmail()));
         account.setMemberSince(Instant.now());
 
         try {
@@ -139,7 +140,32 @@ public class AccountService {
             throw new ServiceException(errMsg, e);
         }
 
-        return null;
+        this.serviceHelper.syncUserAsync(account.getId());
+
+        if (StringUtils.hasText(email)) {
+            // Email confirmation
+            String emailName = name;
+            if (StringUtils.isEmpty(emailName)) {
+                emailName = "there";
+            }
+
+            String subject = "Activate your Staffjoy account";
+            this.sendEmail(account.getId(), email, emailName, subject, AccountConstant.ACTIVATE_ACCOUNT_TMPL, true);
+        }
+
+        // todo - sms on boarding (if worker??)
+
+        LogEntry auditLog = LogEntry.builder()
+            .authorization(AuthContext.getAuthz())
+            .currentUserId(AuthContext.getUserId())
+            .targetType("account")
+            .targetId(account.getId())
+            .updatedContents(account.toString())
+            .build();
+
+        LOGGER.info("created account", auditLog);
+
+        return this.convertToDto(account);
     }
 
     public AccountList list(int offset, int limit) {
@@ -151,14 +177,14 @@ public class AccountService {
         Page<Account> accountPage = accountRepo.findAll(pageRequest);
 
         List<AccountDto> accountDtoList = accountPage.getContent().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
 
         return AccountList.builder()
-                .limit(limit)
-                .offset(offset)
-                .accounts(accountDtoList)
-                .build();
+            .limit(limit)
+            .offset(offset)
+            .accounts(accountDtoList)
+            .build();
     }
 
     public AccountDto get(String userid) {
@@ -233,20 +259,20 @@ public class AccountService {
         this.serviceHelper.syncUserAsync(newAccount.getId());
 
         LogEntry auditlog = LogEntry.builder()
-                .authorization(AuthContext.getAuthz())
-                .currentUserId(AuthContext.getUserId())
-                .targetType("account")
-                .targetId(newAccount.getId())
-                .originalContents(existingAccount.get().toString())
-                .updatedContents(newAccount.toString())
-                .build();
+            .authorization(AuthContext.getAuthz())
+            .currentUserId(AuthContext.getUserId())
+            .targetType("account")
+            .targetId(newAccount.getId())
+            .originalContents(existingAccount.get().toString())
+            .updatedContents(newAccount.toString())
+            .build();
 
         LOGGER.info("updated account", auditlog);
 
         // If account is being activated, or if phone number is changed by current user - send text
         if (newAccount.isConfirmedAndActive() &&
-                StringUtils.hasText(newAccount.getPhoneNumber()) &&
-                !newAccount.getPhoneNumber().equals(existingAccount.get().getPhoneNumber())) {
+            StringUtils.hasText(newAccount.getPhoneNumber()) &&
+            !newAccount.getPhoneNumber().equals(existingAccount.get().getPhoneNumber())) {
             this.serviceHelper.sendSmsGreeting(newAccount.getId());
         }
 
@@ -264,11 +290,11 @@ public class AccountService {
         }
 
         LogEntry auditLog = LogEntry.builder()
-                .authorization(AuthContext.getAuthz())
-                .currentUserId(AuthContext.getUserId())
-                .targetType("account")
-                .targetId(userId)
-                .build();
+            .authorization(AuthContext.getAuthz())
+            .currentUserId(AuthContext.getUserId())
+            .targetType("account")
+            .targetId(userId)
+            .build();
 
         LOGGER.info("updated password", auditLog);
 
@@ -344,7 +370,7 @@ public class AccountService {
             throw new ServiceException(ResultCode.NOT_FOUND, String.format("User with id %s not found", userId));
         }
 
-        String subject = "Confirm You New Email Address";
+        String subject = "Confirm Your New Email Address";
         this.sendEmail(account.get().getId(), email, account.get().getName(), subject, AccountConstant.CONFIRM_EMAIL_TMPL, true);
     }
 
@@ -365,12 +391,12 @@ public class AccountService {
         this.serviceHelper.syncUserAsync(userId);
 
         LogEntry logEntry = LogEntry.builder()
-                .authorization(AuthContext.getAuthz())
-                .currentUserId(AuthContext.getUserId())
-                .targetType("account")
-                .targetId(userId)
-                .updatedContents(email)
-                .build();
+            .authorization(AuthContext.getAuthz())
+            .currentUserId(AuthContext.getUserId())
+            .targetType("account")
+            .targetId(userId)
+            .updatedContents(email)
+            .build();
 
         LOGGER.info("changed email", logEntry);
 
@@ -385,7 +411,7 @@ public class AccountService {
         this.serviceHelper.syncUserAsync(userid);
     }
 
-    private void sendEmail(String userId, String email, String name, String subject, String template, boolean activateOrConfirm) {
+    public void sendEmail(String userId, String email, String name, String subject, String template, boolean activateOrConfirm) {
         String token;
         try {
             token = Sign.generateEmailConfirmationToken(userId, email, appProps.getSigningSecret());
@@ -398,7 +424,7 @@ public class AccountService {
         String pathFormat = "/activate/%s";
 
         if (!activateOrConfirm) {
-            pathFormat = "/rest/%s";
+            pathFormat = "/reset/%s";
         }
 
         String path = String.format(pathFormat, token);
@@ -426,11 +452,11 @@ public class AccountService {
         }
 
         EmailRequest emailRequest = EmailRequest.builder()
-                .to(email)
-                .name(name)
-                .subject(subject)
-                .htmlBody(htmlBody)
-                .build();
+            .to(email)
+            .name(name)
+            .subject(subject)
+            .htmlBody(htmlBody)
+            .build();
 
         BaseResponse baseResponse;
         try {

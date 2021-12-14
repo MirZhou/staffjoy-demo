@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
  * @author 周光兵
  * @date 2021/7/20 23:41
  */
-@FeignClient(name = AccountConstant.SERVICE_NAME, path = "/v1/account", url = "${staffjoy.account-service-endpoint")
+@FeignClient(name = AccountConstant.SERVICE_NAME, path = "/v1/account", url = "${staffjoy.account-service-endpoint}")
 public interface AccountClient {
     @PostMapping(path = "/create")
     GenericAccountResponse createAccount(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String auth,

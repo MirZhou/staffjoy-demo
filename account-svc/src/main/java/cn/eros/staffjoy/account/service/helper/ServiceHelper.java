@@ -201,7 +201,7 @@ public class ServiceHelper {
     public boolean isAlmostSameInstant(Instant dt1, Instant dt2) {
         long diff = Math.abs(dt1.toEpochMilli() - dt2.toEpochMilli());
 
-        return diff < TimeUnit.SECONDS.toMillis(1);
+        return diff < TimeUnit.SECONDS.toMillis(1L);
 
     }
 
@@ -220,7 +220,7 @@ public class ServiceHelper {
         }
     }
 
-    private void syncUserWithIntercom(User user, String userid) {
+    public void syncUserWithIntercom(User user, String userid) {
         try {
             Map<String, String> params = new HashMap<>(1);
             params.put("user_id", userid);

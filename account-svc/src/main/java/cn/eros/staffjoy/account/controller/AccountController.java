@@ -80,6 +80,11 @@ public class AccountController {
     }
 
     @PostMapping("/get_or_create")
+    @Authorize({
+        AuthConstant.AUTHORIZATION_SUPPORT_USER,
+        AuthConstant.AUTHORIZATION_WWW_SERVICE,
+        AuthConstant.AUTHORIZATION_COMPANY_SERVICE
+    })
     public GenericAccountResponse getOrCreate(@RequestBody @Valid GetOrCreateRequest request) {
         AccountDto accountDto = this.accountService.getOrCreate(request.getName(), request.getEmail(), request.getPhoneNumber());
 
