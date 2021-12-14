@@ -15,6 +15,7 @@ import cn.eros.staffjoy.mail.client.MailClient;
 import cn.eros.staffjoy.mail.dto.EmailRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -246,5 +247,109 @@ public class AccountControllerTest {
         assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/reset"))
             .isEqualTo(2);
         assertThat(emailRequest.getHtmlBody()).startsWith("<div>We received a request to reset the password on your account");
+    }
+
+    @Test
+    public void testUpdateAndVerifyPasswordValidation() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+            .thenReturn(BaseResponse.builder()
+                .message("email sent").build());
+
+        String name = "testAccount";
+        String email = "test@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+            .name(name)
+            .email(email)
+            .phoneNumber(phoneNumber)
+            .build();
+
+        // create one account
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE,
+            createAccountRequest
+        );
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        AccountDto accountDto = genericAccountResponse.getAccount();
+
+        // update password too short
+        String password = "pass";
+        UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
+            .userid(accountDto.getId())
+            .password(password)
+            .build();
+        BaseResponse baseResponse = this.accountClient.updatePassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
+        log.info(baseResponse.toString());
+        assertThat(baseResponse.isSuccess()).isFalse();
+        assertThat(baseResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
+
+        // update password success
+        password = "pass123456";
+        updatePasswordRequest = UpdatePasswordRequest.builder()
+            .userid(accountDto.getId())
+            .password(password)
+            .build();
+        baseResponse = this.accountClient.updatePassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
+        log.info(baseResponse.toString());
+        assertThat(baseResponse.isSuccess()).isTrue();
+
+        // verify not found
+        VerifyPasswordRequest verifyPasswordRequest = VerifyPasswordRequest.builder()
+            .password(password)
+            .email("test000@staffjoy.xyz")
+            .build();
+        genericAccountResponse = this.accountClient.verifyPassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.NOT_FOUND);
+
+        // verify account not active
+        verifyPasswordRequest = VerifyPasswordRequest.builder()
+            .password(password)
+            .email(email)
+            .build();
+        genericAccountResponse = this.accountClient.verifyPassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.REQ_REJECT);
+
+        // activate the account
+        accountDto.setConfirmedAndActive(true);
+        genericAccountResponse = this.accountClient.updateAccount(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // verify wrong password
+        verifyPasswordRequest = VerifyPasswordRequest.builder()
+            .email(email)
+            .password("wrong_password")
+            .build();
+        genericAccountResponse = this.accountClient.verifyPassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.UNAUTHORIZED);
+
+        // verify correct password
+        verifyPasswordRequest = VerifyPasswordRequest.builder()
+            .email(email)
+            .password(password)
+            .build();
+        genericAccountResponse = this.accountClient.verifyPassword(
+            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+    }
+
+    @After
+    public void destory() {
+        this.accountRepo.deleteAll();
     }
 }

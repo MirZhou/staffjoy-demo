@@ -159,6 +159,10 @@ public class AccountController {
     }
 
     @PostMapping("/verify_password")
+    @Authorize({
+        AuthConstant.AUTHORIZATION_WWW_SERVICE,
+        AuthConstant.AUTHORIZATION_SUPPORT_USER
+    })
     public GenericAccountResponse verifyPassword(@RequestBody @Valid VerifyPasswordRequest request) {
         AccountDto accountDto = this.accountService.verifyPassword(request.getEmail(), request.getPassword());
 
