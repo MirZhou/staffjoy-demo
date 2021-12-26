@@ -27,10 +27,10 @@ import javax.annotation.PreDestroy;
 @Configuration
 @EnableConfigurationProperties(StaffjoyProps.class)
 public class StaffjoyConfig implements WebMvcConfigurer {
-    @Value("${spring.profiles.active:NA")
+    @Value("${spring.profiles.active:NA}")
     private String activeProfile;
 
-    @Value("${spring.application.name:NA")
+    @Value("${spring.application.name:NA}")
     private String appName;
 
     @Autowired

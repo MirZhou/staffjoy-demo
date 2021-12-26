@@ -243,6 +243,8 @@ public class AccountService {
             // User can request email change - not do it
             if (!existingAccount.get().getEmail().equals(newAccount.getEmail())) {
                 this.requestEmailChange(newAccount.getId(), newAccount.getEmail());
+                // revert
+                newAccount.setEmail(existingAccount.get().getEmail());
             }
         }
 
@@ -258,7 +260,7 @@ public class AccountService {
 
         this.serviceHelper.syncUserAsync(newAccount.getId());
 
-        LogEntry auditlog = LogEntry.builder()
+        LogEntry auditLog = LogEntry.builder()
             .authorization(AuthContext.getAuthz())
             .currentUserId(AuthContext.getUserId())
             .targetType("account")
@@ -267,7 +269,7 @@ public class AccountService {
             .updatedContents(newAccount.toString())
             .build();
 
-        LOGGER.info("updated account", auditlog);
+        LOGGER.info("updated account", auditLog);
 
         // If account is being activated, or if phone number is changed by current user - send text
         if (newAccount.isConfirmedAndActive() &&

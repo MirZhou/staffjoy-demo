@@ -37,7 +37,7 @@ public class WorkerService {
     private ServiceHelper serviceHelper;
 
     public DirectoryEntryDto createDirectory(WorkerDto workerDto) {
-        // validate and will thrwo exception if not found
+        // validate and will throw exception if not found
         this.teamService.getTeamWithCompanyIdValidation(workerDto.getCompanyId(), workerDto.getTeamId());
 
         DirectoryEntryDto directoryEntryDto = this.directoryService.getDirectoryEntry(
