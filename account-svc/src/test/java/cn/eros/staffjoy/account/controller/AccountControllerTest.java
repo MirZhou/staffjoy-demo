@@ -620,6 +620,45 @@ public class AccountControllerTest {
         assertThat(greetingRequest.getUserId()).isEqualTo(accountDto.getId());
     }
 
+    @Test
+    public void testGetAccount() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
+
+        // first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        AccountDto accountDto = genericAccountResponse.getAccount();
+
+        // get account fail
+        genericAccountResponse = this.accountClient.getAccount(AuthConstant.AUTHORIZATION_AUTHENTICATED_USER,
+                accountDto.getId());
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.FAILURE);
+
+        // get account success
+        genericAccountResponse = this.accountClient.getAccount(AuthConstant.AUTHORIZATION_WHOAMI_SERVICE,
+                accountDto.getId());
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+        AccountDto gotAccountDto = genericAccountResponse.getAccount();
+        assertThat(accountDto).isEqualTo(gotAccountDto);
+                
+    }
+
     @After
     public void destroy() {
         this.accountRepo.deleteAll();
