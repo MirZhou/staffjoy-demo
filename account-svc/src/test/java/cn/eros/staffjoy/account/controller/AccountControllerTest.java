@@ -736,6 +736,43 @@ public class AccountControllerTest {
         assertThat(accountList.getOffset()).isEqualTo(1);
     }
 
+    @Test
+    public void testCreateAccountValidation() {
+        String phoneNumber = "18012340000";
+        // empty request
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .build();
+        GenericAccountResponse createAccountResponse = this.accountClient
+                .createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        log.info(createAccountResponse.toString());
+        assertThat(createAccountResponse.isSuccess()).isFalse();
+        assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
+
+        // invalid email
+        createAccountRequest = CreateAccountRequest.builder().email("invalid_email").build();
+        createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                        createAccountRequest);
+        log.info(createAccountResponse.toString());
+        assertThat(createAccountResponse.isSuccess()).isFalse();
+        assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
+
+        // invalid phone number
+        createAccountRequest = CreateAccountRequest.builder().phoneNumber("invalid_phone_number").build();
+        createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                        createAccountRequest);
+        log.info(createAccountResponse.toString());
+        assertThat(createAccountResponse.isSuccess()).isFalse();
+        assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
+
+        // invalid auth
+        createAccountRequest = CreateAccountRequest.builder().phoneNumber(phoneNumber).build();
+        createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_ANONYMOUS_WEB,
+                        createAccountRequest);
+        log.info(createAccountResponse.toString());
+        assertThat(createAccountResponse.isSuccess()).isFalse();
+        assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.UNAUTHORIZED);
+    }
+
     @After
     public void destroy() {
         this.accountRepo.deleteAll();
