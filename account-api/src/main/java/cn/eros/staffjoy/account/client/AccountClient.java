@@ -39,7 +39,7 @@ public interface AccountClient {
 
     @GetMapping(path = "/get")
     GenericAccountResponse getAccount(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String auth,
-                                      @RequestParam @NotBlank String userid);
+                                      @RequestParam @NotBlank String userId);
 
     @PutMapping(path = "/update")
     GenericAccountResponse updateAccount(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String auth,
