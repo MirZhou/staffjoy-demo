@@ -751,7 +751,7 @@ public class AccountControllerTest {
         // invalid email
         createAccountRequest = CreateAccountRequest.builder().email("invalid_email").build();
         createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
-                        createAccountRequest);
+                createAccountRequest);
         log.info(createAccountResponse.toString());
         assertThat(createAccountResponse.isSuccess()).isFalse();
         assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
@@ -759,7 +759,7 @@ public class AccountControllerTest {
         // invalid phone number
         createAccountRequest = CreateAccountRequest.builder().phoneNumber("invalid_phone_number").build();
         createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
-                        createAccountRequest);
+                createAccountRequest);
         log.info(createAccountResponse.toString());
         assertThat(createAccountResponse.isSuccess()).isFalse();
         assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
@@ -767,10 +767,58 @@ public class AccountControllerTest {
         // invalid auth
         createAccountRequest = CreateAccountRequest.builder().phoneNumber(phoneNumber).build();
         createAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_ANONYMOUS_WEB,
-                        createAccountRequest);
+                createAccountRequest);
         log.info(createAccountResponse.toString());
         assertThat(createAccountResponse.isSuccess()).isFalse();
         assertThat(createAccountResponse.getCode()).isEqualTo(ResultCode.UNAUTHORIZED);
+    }
+
+    @Test
+    public void testGetAccountByPhoneNumber() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
+
+        // first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // get account by phoneNumber
+        genericAccountResponse = this.accountClient.getAccountByPhoneNumber(AuthConstant.AUTHORIZATION_SUPPORT_USER,
+                phoneNumber);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+        AccountDto accountDto = genericAccountResponse.getAccount();
+        assertThat(accountDto.getId()).isNotNull();
+        assertThat(accountDto.getName()).isEqualTo(name);
+        assertThat(accountDto.getEmail()).isEqualTo(email);
+        assertThat(accountDto.getPhotoUrl()).isNotNull();
+        assertThat(accountDto.getMemberSince()).isBeforeOrEqualTo(Instant.now());
+        assertThat(accountDto.isSupport()).isFalse();
+        assertThat(accountDto.isConfirmedAndActive()).isFalse();
+
+        // invalid phone number
+        genericAccountResponse = this.accountClient.getAccountByPhoneNumber(AuthConstant.AUTHORIZATION_SUPPORT_USER,
+                "invalid_phone_number");
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
+
+        // phoneNumber not exists
+        genericAccountResponse = this.accountClient.getAccountByPhoneNumber(AuthConstant.AUTHORIZATION_SUPPORT_USER,
+                "18000001111");
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.NOT_FOUND);
     }
 
     @After
