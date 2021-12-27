@@ -45,7 +45,8 @@ public class AccountController {
             AuthConstant.AUTHORIZATION_COMPANY_SERVICE
     })
     public GenericAccountResponse createAccount(@RequestBody @Valid CreateAccountRequest request) {
-        AccountDto accountDto = this.accountService.create(request.getName(), request.getEmail(), request.getPhoneNumber());
+        AccountDto accountDto = this.accountService.create(request.getName(), request.getEmail(),
+                request.getPhoneNumber());
 
         return new GenericAccountResponse(accountDto);
     }
@@ -73,7 +74,7 @@ public class AccountController {
             AuthConstant.AUTHORIZATION_SUPPORT_USER
     })
     public ListAccountResponse listAccounts(@RequestParam int offset,
-                                            @RequestParam @Min(0) int limit) {
+            @RequestParam @Min(0) int limit) {
         AccountList accountList = this.accountService.list(offset, limit);
 
         return new ListAccountResponse(accountList);
@@ -81,12 +82,13 @@ public class AccountController {
 
     @PostMapping("/get_or_create")
     @Authorize({
-        AuthConstant.AUTHORIZATION_SUPPORT_USER,
-        AuthConstant.AUTHORIZATION_WWW_SERVICE,
-        AuthConstant.AUTHORIZATION_COMPANY_SERVICE
+            AuthConstant.AUTHORIZATION_SUPPORT_USER,
+            AuthConstant.AUTHORIZATION_WWW_SERVICE,
+            AuthConstant.AUTHORIZATION_COMPANY_SERVICE
     })
     public GenericAccountResponse getOrCreate(@RequestBody @Valid GetOrCreateRequest request) {
-        AccountDto accountDto = this.accountService.getOrCreate(request.getName(), request.getEmail(), request.getPhoneNumber());
+        AccountDto accountDto = this.accountService.getOrCreate(request.getName(), request.getEmail(),
+                request.getPhoneNumber());
 
         return new GenericAccountResponse(accountDto);
     }
@@ -102,11 +104,11 @@ public class AccountController {
             AuthConstant.AUTHORIZATION_SUPPORT_USER,
             AuthConstant.AUTHORIZATION_SUPERPOWERS_SERVICE
     })
-    public GenericAccountResponse getAccount(@RequestParam @NotBlank String userid) {
-        this.validateAuthenticatedUser(userid);
+    public GenericAccountResponse getAccount(@RequestParam @NotBlank String userId) {
+        this.validateAuthenticatedUser(userId);
         this.validateEnv();
 
-        AccountDto accountDto = this.accountService.get(userid);
+        AccountDto accountDto = this.accountService.get(userId);
 
         return new GenericAccountResponse(accountDto);
     }
@@ -128,7 +130,7 @@ public class AccountController {
         return new GenericAccountResponse(accountDto);
     }
 
-    @GetMapping("/get_account_by_phonenumber")
+    @GetMapping("/get_account_by_phone_number")
     @Authorize({
             AuthConstant.AUTHORIZATION_SUPPORT_USER,
             AuthConstant.AUTHORIZATION_WWW_SERVICE,
@@ -151,17 +153,15 @@ public class AccountController {
 
         this.accountService.updatePassword(request.getUserid(), request.getPassword());
 
-        return new BaseResponse() {
-            {
-                setMessage("password updated");
-            }
-        };
+        return BaseResponse.builder()
+                .message("password updated")
+                .build();
     }
 
     @PostMapping("/verify_password")
     @Authorize({
-        AuthConstant.AUTHORIZATION_WWW_SERVICE,
-        AuthConstant.AUTHORIZATION_SUPPORT_USER
+            AuthConstant.AUTHORIZATION_WWW_SERVICE,
+            AuthConstant.AUTHORIZATION_SUPPORT_USER
     })
     public GenericAccountResponse verifyPassword(@RequestBody @Valid VerifyPasswordRequest request) {
         AccountDto accountDto = this.accountService.verifyPassword(request.getEmail(), request.getPassword());
@@ -177,9 +177,9 @@ public class AccountController {
     public BaseResponse requestPasswordReset(@RequestBody @Valid PasswordResetRequest request) {
         this.accountService.requestPasswordReset(request.getEmail());
 
-        return new BaseResponse() {{
-            setMessage("password reset requested");
-        }};
+        return BaseResponse.builder()
+                .message("password reset requested")
+                .build();
     }
 
     @PostMapping("/request_email_change")
@@ -192,9 +192,9 @@ public class AccountController {
 
         this.accountService.requestEmailChange(request.getUserid(), request.getEmail());
 
-        return new BaseResponse() {{
-            setMessage("email change requested");
-        }};
+        return BaseResponse.builder()
+                .message("email change requested")
+                .build();
     }
 
     @PostMapping("/change_email")
@@ -205,9 +205,9 @@ public class AccountController {
     public BaseResponse changeEmail(@RequestBody @Valid EmailConfirmationRequest request) {
         this.accountService.changeEmailAndActivateAccount(request.getUserid(), request.getEmail());
 
-        return new BaseResponse() {{
-            setMessage("email change requested");
-        }};
+        return BaseResponse.builder()
+                .message("email change requested")
+                .build();
     }
 
     private void validateAuthenticatedUser(String userId) {
@@ -225,11 +225,10 @@ public class AccountController {
     }
 
     private void validateEnv() {
-        if (AuthConstant.AUTHORIZATION_SUPERPOWERS_SERVICE.equals(AuthContext.getAuthz())) {
-            if (!EnvConstant.ENV_DEV.equals(this.envConfig.getName())) {
-                LOGGER.warn("Development service trying to connect outside development environment");
-                throw new PermissionDeniedException("This service is not available outside development environments");
-            }
+        if (AuthConstant.AUTHORIZATION_SUPERPOWERS_SERVICE.equals(AuthContext.getAuthz())
+                && !EnvConstant.ENV_DEV.equals(this.envConfig.getName())) {
+            LOGGER.warn("Development service trying to connect outside development environment");
+            throw new PermissionDeniedException("This service is not available outside development environments");
         }
     }
 

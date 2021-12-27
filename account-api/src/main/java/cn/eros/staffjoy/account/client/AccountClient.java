@@ -45,7 +45,7 @@ public interface AccountClient {
     GenericAccountResponse updateAccount(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String auth,
                                          @RequestBody @Valid AccountDto accountDto);
 
-    @GetMapping(path = "/get_account_by_phonenumber")
+    @GetMapping(path = "/get_account_by_phone_number")
     GenericAccountResponse getAccountByPhoneNumber(@RequestHeader(AuthConstant.AUTHORIZATION_HEADER) String auth,
                                                    @RequestParam @PhoneNumber String phoneNumber);
 
