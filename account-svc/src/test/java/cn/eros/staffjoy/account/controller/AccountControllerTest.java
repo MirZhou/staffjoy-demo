@@ -656,7 +656,84 @@ public class AccountControllerTest {
         assertThat(genericAccountResponse.isSuccess()).isTrue();
         AccountDto gotAccountDto = genericAccountResponse.getAccount();
         assertThat(accountDto).isEqualTo(gotAccountDto);
-                
+
+    }
+
+    @Test
+    public void testListAccounts() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
+
+        // first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // list account and verify
+        ListAccountResponse listAccountResponse = this.accountClient
+                .listAccounts(AuthConstant.AUTHORIZATION_SUPPORT_USER, 0, 2);
+        log.info(listAccountResponse.toString());
+        assertThat(listAccountResponse.isSuccess()).isTrue();
+        AccountList accountList = listAccountResponse.getAccountList();
+        assertThat(accountList.getAccounts()).hasSize(1);
+        assertThat(accountList.getLimit()).isEqualTo(2);
+        assertThat(accountList.getOffset()).isZero();
+
+        // second account
+        name = "testAccount002";
+        email = "test002@staffjoy.xyz";
+        phoneNumber = "18012344322";
+        createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create account
+        genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // list and verify
+        listAccountResponse = this.accountClient.listAccounts(AuthConstant.AUTHORIZATION_SUPPORT_USER, 0, 2);
+        log.info(listAccountResponse.toString());
+        assertThat(listAccountResponse.isSuccess()).isTrue();
+        accountList = listAccountResponse.getAccountList();
+        assertThat(accountList.getAccounts()).hasSize(2);
+        assertThat(accountList.getLimit()).isEqualTo(2);
+        assertThat(accountList.getOffset()).isZero();
+
+        // third account
+        name = "testAccount003";
+        email = "test003@staffjoy.xyz";
+        phoneNumber = "18012344323";
+        createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create account
+        genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // list and verify
+        listAccountResponse = this.accountClient.listAccounts(AuthConstant.AUTHORIZATION_SUPPORT_USER, 1, 2);
+        log.info(listAccountResponse.toString());
+        assertThat(listAccountResponse.isSuccess()).isTrue();
+        accountList = listAccountResponse.getAccountList();
+        assertThat(accountList.getAccounts()).hasSize(1);
+        assertThat(accountList.getLimit()).isEqualTo(2);
+        assertThat(accountList.getOffset()).isEqualTo(1);
     }
 
     @After
