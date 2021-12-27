@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@EnableFeignClients(basePackages = {"cn.eros.staffjoy.account.client"})
+@EnableFeignClients(basePackages = { "cn.eros.staffjoy.account.client" })
 @Import(TestConfig.class)
 @Slf4j
 public class AccountControllerTest {
@@ -71,18 +71,20 @@ public class AccountControllerTest {
     @Test
     public void testChangeEmail() {
         // arrange mock
-        when(this.mailClient.send(any(EmailRequest.class))).thenReturn(BaseResponse.builder().message("email sent").build());
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
 
         String name = "testAccount";
         String email = "test@staffjoy.xyz";
         String phoneNumber = "18001801236";
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
         // create one account
-        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        GenericAccountResponse genericAccountResponse = this.accountClient
+                .createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
         AccountDto accountDto = genericAccountResponse.getAccount();
         assertThat(accountDto.isConfirmedAndActive()).isFalse();
@@ -90,27 +92,29 @@ public class AccountControllerTest {
         // change email
         String changedEmail = "test123@staffjoy.xyz";
         EmailConfirmationRequest emailConfirmationRequest = EmailConfirmationRequest.builder()
-            .userid(accountDto.getId())
-            .email(changedEmail)
-            .build();
-        BaseResponse baseResponse = this.accountClient.changeEmail(AuthConstant.AUTHORIZATION_WWW_SERVICE, emailConfirmationRequest);
+                .userid(accountDto.getId())
+                .email(changedEmail)
+                .build();
+        BaseResponse baseResponse = this.accountClient.changeEmail(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                emailConfirmationRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isTrue();
 
         // verify email changed and account activated
         GetOrCreateRequest getOrCreateRequest = GetOrCreateRequest.builder()
-            .email(changedEmail)
-            .build();
-        genericAccountResponse = this.accountClient.getOrCreateAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, getOrCreateRequest);
+                .email(changedEmail)
+                .build();
+        genericAccountResponse = this.accountClient.getOrCreateAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                getOrCreateRequest);
         AccountDto foundAccountDto = genericAccountResponse.getAccount();
         assertThat(foundAccountDto.getEmail()).isEqualTo(changedEmail);
         assertThat(foundAccountDto.isConfirmedAndActive()).isTrue();
 
         // account not found
         emailConfirmationRequest = EmailConfirmationRequest.builder()
-            .userid("not_existing_id")
-            .email(changedEmail)
-            .build();
+                .userid("not_existing_id")
+                .email(changedEmail)
+                .build();
         baseResponse = this.accountClient.changeEmail(AuthConstant.AUTHORIZATION_WWW_SERVICE, emailConfirmationRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isFalse();
@@ -121,21 +125,22 @@ public class AccountControllerTest {
     public void testRequestEmailChange() {
         // arrange mock
         when(this.mailClient.send(any(EmailRequest.class)))
-            .thenReturn(BaseResponse.builder()
-                .message("email sent")
-                .build());
+                .thenReturn(BaseResponse.builder()
+                        .message("email sent")
+                        .build());
 
         String name = "testAccount";
         String email = "test@staffjoy.xyz";
         String phoneNumber = "18012344321";
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
 
         // create one account
-        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        GenericAccountResponse genericAccountResponse = this.accountClient
+                .createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         AccountDto accountDto = genericAccountResponse.getAccount();
@@ -143,10 +148,11 @@ public class AccountControllerTest {
         // request email change
         String updatedEmail = "test111@staffjoy.xyz";
         EmailChangeRequest emailChangeRequest = EmailChangeRequest.builder()
-            .email(updatedEmail)
-            .userid(accountDto.getId())
-            .build();
-        BaseResponse baseResponse = this.accountClient.requestEmailChange(AuthConstant.AUTHORIZATION_SUPPORT_USER, emailChangeRequest);
+                .email(updatedEmail)
+                .userid(accountDto.getId())
+                .build();
+        BaseResponse baseResponse = this.accountClient.requestEmailChange(AuthConstant.AUTHORIZATION_SUPPORT_USER,
+                emailChangeRequest);
         assertThat(baseResponse.isSuccess()).isTrue();
 
         // capture and verify email sent
@@ -160,7 +166,8 @@ public class AccountControllerTest {
         assertThat(emailRequest.getTo()).isEqualTo(updatedEmail);
         assertThat(emailRequest.getSubject()).isEqualTo(subject);
         assertThat(emailRequest.getName()).isEqualTo(name);
-        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/")).isEqualTo(3);
+        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/"))
+                .isEqualTo(3);
         assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), name)).isEqualTo(1);
         assertThat(emailRequest.getHtmlBody()).startsWith("<div>Hi");
     }
@@ -169,37 +176,35 @@ public class AccountControllerTest {
     public void testRequestPasswordReset() {
         // arrange mock
         when(this.mailClient.send(any(EmailRequest.class)))
-            .thenReturn(BaseResponse.builder()
-                .message("email sent").build());
+                .thenReturn(BaseResponse.builder()
+                        .message("email sent").build());
 
         String name = "testAccount";
         String email = "test@staffjoy.xyz";
         String phoneNumber = "18012344321";
 
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
 
         // create one account
         GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            createAccountRequest
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         AccountDto accountDto = genericAccountResponse.getAccount();
 
         // request password reset
         PasswordResetRequest passwordResetRequest = PasswordResetRequest.builder()
-            .email(email)
-            .build();
+                .email(email)
+                .build();
 
         BaseResponse baseResponse = this.accountClient.requestPasswordReset(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            passwordResetRequest
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                passwordResetRequest);
         assertThat(baseResponse.isSuccess()).isTrue();
 
         // capture and verify
@@ -214,26 +219,25 @@ public class AccountControllerTest {
         assertThat(emailRequest.getTo()).isEqualTo(email);
         assertThat(emailRequest.getSubject()).isEqualTo(subject);
         assertThat(emailRequest.getName()).isEqualTo(name);
-        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/")).isEqualTo(3);
+        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/"))
+                .isEqualTo(3);
         assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), name)).isEqualTo(1);
         assertThat(emailRequest.getHtmlBody()).startsWith("<div><p>Hi");
 
         // activate the account
         accountDto.setConfirmedAndActive(true);
         genericAccountResponse = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            accountDto
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                accountDto);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         // request password reset
         passwordResetRequest = PasswordResetRequest.builder()
-            .email(email)
-            .build();
+                .email(email)
+                .build();
         baseResponse = this.accountClient.requestPasswordReset(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            passwordResetRequest
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                passwordResetRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isTrue();
 
@@ -248,32 +252,32 @@ public class AccountControllerTest {
         assertThat(emailRequest.getSubject()).isEqualTo(subject);
         assertThat(emailRequest.getName()).isEqualTo(name);
         assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/reset"))
-            .isEqualTo(2);
-        assertThat(emailRequest.getHtmlBody()).startsWith("<div>We received a request to reset the password on your account");
+                .isEqualTo(2);
+        assertThat(emailRequest.getHtmlBody())
+                .startsWith("<div>We received a request to reset the password on your account");
     }
 
     @Test
     public void testUpdateAndVerifyPasswordValidation() {
         // arrange mock
         when(this.mailClient.send(any(EmailRequest.class)))
-            .thenReturn(BaseResponse.builder()
-                .message("email sent").build());
+                .thenReturn(BaseResponse.builder()
+                        .message("email sent").build());
 
         String name = "testAccount";
         String email = "test@staffjoy.xyz";
         String phoneNumber = "18012344321";
 
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
 
         // create one account
         GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            createAccountRequest
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         AccountDto accountDto = genericAccountResponse.getAccount();
@@ -281,11 +285,11 @@ public class AccountControllerTest {
         // update password too short
         String password = "pass";
         UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-            .userid(accountDto.getId())
-            .password(password)
-            .build();
+                .userid(accountDto.getId())
+                .password(password)
+                .build();
         BaseResponse baseResponse = this.accountClient.updatePassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isFalse();
         assertThat(baseResponse.getCode()).isEqualTo(ResultCode.PARAM_VALID_ERROR);
@@ -293,32 +297,32 @@ public class AccountControllerTest {
         // update password success
         password = "pass123456";
         updatePasswordRequest = UpdatePasswordRequest.builder()
-            .userid(accountDto.getId())
-            .password(password)
-            .build();
+                .userid(accountDto.getId())
+                .password(password)
+                .build();
         baseResponse = this.accountClient.updatePassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isTrue();
 
         // verify not found
         VerifyPasswordRequest verifyPasswordRequest = VerifyPasswordRequest.builder()
-            .password(password)
-            .email("test000@staffjoy.xyz")
-            .build();
+                .password(password)
+                .email("test000@staffjoy.xyz")
+                .build();
         genericAccountResponse = this.accountClient.verifyPassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isFalse();
         assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.NOT_FOUND);
 
         // verify account not active
         verifyPasswordRequest = VerifyPasswordRequest.builder()
-            .password(password)
-            .email(email)
-            .build();
+                .password(password)
+                .email(email)
+                .build();
         genericAccountResponse = this.accountClient.verifyPassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isFalse();
         assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -326,27 +330,27 @@ public class AccountControllerTest {
         // activate the account
         accountDto.setConfirmedAndActive(true);
         genericAccountResponse = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         // verify wrong password
         verifyPasswordRequest = VerifyPasswordRequest.builder()
-            .email(email)
-            .password("wrong_password")
-            .build();
+                .email(email)
+                .password("wrong_password")
+                .build();
         genericAccountResponse = this.accountClient.verifyPassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isFalse();
         assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.UNAUTHORIZED);
 
         // verify correct password
         verifyPasswordRequest = VerifyPasswordRequest.builder()
-            .email(email)
-            .password(password)
-            .build();
+                .email(email)
+                .password(password)
+                .build();
         genericAccountResponse = this.accountClient.verifyPassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isTrue();
         assertThat(genericAccountResponse.getAccount()).isEqualTo(accountDto);
@@ -356,24 +360,23 @@ public class AccountControllerTest {
     public void testUpdateAndVerifyPassword() {
         // arrange mock
         when(this.mailClient.send(any(EmailRequest.class)))
-            .thenReturn(BaseResponse.builder()
-                .message("email sent").build());
+                .thenReturn(BaseResponse.builder()
+                        .message("email sent").build());
 
         String name = "testAccount";
         String email = "test@staffjoy.xyz";
         String phoneNumber = "18012344321";
 
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
 
         // create one account
         GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE,
-            createAccountRequest
-        );
+                AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         AccountDto accountDto = genericAccountResponse.getAccount();
@@ -381,27 +384,27 @@ public class AccountControllerTest {
         // update password success
         String password = "pass123456";
         UpdatePasswordRequest updatePasswordRequest = UpdatePasswordRequest.builder()
-            .userid(accountDto.getId())
-            .password(password)
-            .build();
+                .userid(accountDto.getId())
+                .password(password)
+                .build();
         BaseResponse baseResponse = this.accountClient.updatePassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, updatePasswordRequest);
         log.info(baseResponse.toString());
         assertThat(baseResponse.isSuccess()).isTrue();
 
         // activate the account
         accountDto.setConfirmedAndActive(true);
         genericAccountResponse = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         // verify correct password
         VerifyPasswordRequest verifyPasswordRequest = VerifyPasswordRequest.builder()
-            .email(email)
-            .password(password)
-            .build();
+                .email(email)
+                .password(password)
+                .build();
         genericAccountResponse = this.accountClient.verifyPassword(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, verifyPasswordRequest);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isTrue();
         assertThat(genericAccountResponse.getAccount()).isEqualTo(accountDto);
@@ -410,21 +413,23 @@ public class AccountControllerTest {
     @Test
     public void testUpdateAccountValidation() {
         // arrange mock
-        when(this.mailClient.send(any(EmailRequest.class))).thenReturn(BaseResponse.builder().message("message sent").build());
-        when(this.botClient.sendSmsGreeting(any(GreetingRequest.class))).thenReturn(BaseResponse.builder().message("sms sent").build());
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("message sent").build());
+        when(this.botClient.sendSmsGreeting(any(GreetingRequest.class)))
+                .thenReturn(BaseResponse.builder().message("sms sent").build());
 
         // create first account
         String name = "testAccount001";
         String email = "test001@staffjoy.xyz";
         String phoneNumber = "18012344321";
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
         // create
         GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
 
         // create second account
@@ -436,13 +441,13 @@ public class AccountControllerTest {
         String externalApex = "staffjoy-v2.local";
 
         createAccountRequest = CreateAccountRequest.builder()
-            .name(name)
-            .email(email)
-            .phoneNumber(phoneNumber)
-            .build();
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
         // create
         genericAccountResponse = this.accountClient.createAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
         assertThat(genericAccountResponse.isSuccess()).isTrue();
         AccountDto accountDto = genericAccountResponse.getAccount();
 
@@ -452,7 +457,7 @@ public class AccountControllerTest {
         accountDto.setPhoneNumber("18012344323");
         // no current user id
         genericAccountResponse = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse.toString());
         assertThat(genericAccountResponse.isSuccess()).isFalse();
         assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.FAILURE);
@@ -460,7 +465,7 @@ public class AccountControllerTest {
         // set user id for testing
         TestConfig.TEST_USER_ID = accountDto.getId();
         GenericAccountResponse genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isTrue();
 
@@ -468,7 +473,7 @@ public class AccountControllerTest {
         // can't update not existing account
         accountDto.setId("not_existing_id");
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.NOT_FOUND);
@@ -479,7 +484,7 @@ public class AccountControllerTest {
         Instant oldMemberSince = accountDto.getMemberSince();
         accountDto.setMemberSince(oldMemberSince.minusSeconds(5L));
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -490,7 +495,7 @@ public class AccountControllerTest {
         String oldEmail = accountDto.getEmail();
         accountDto.setEmail("test001@staffjoy.xyz");
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -501,7 +506,7 @@ public class AccountControllerTest {
         String oldPhoneNumber = accountDto.getPhoneNumber();
         accountDto.setPhoneNumber("18012344321");
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -511,7 +516,7 @@ public class AccountControllerTest {
         // user can't activate him/herself
         accountDto.setConfirmedAndActive(true);
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -521,7 +526,7 @@ public class AccountControllerTest {
         // user can't change support parameter
         accountDto.setSupport(true);
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -532,7 +537,7 @@ public class AccountControllerTest {
         String photoUrl = accountDto.getPhotoUrl();
         accountDto.setPhotoUrl("updated_photo_url");
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isFalse();
         assertThat(genericAccountResponse1.getCode()).isEqualTo(ResultCode.REQ_REJECT);
@@ -541,7 +546,7 @@ public class AccountControllerTest {
         accountDto.setPhotoUrl(photoUrl);
         // user updated his/her account successfully
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isTrue();
 
@@ -550,7 +555,7 @@ public class AccountControllerTest {
         String updatedEmail = "test003@staffjoy.xyz";
         accountDto.setEmail(updatedEmail);
         genericAccountResponse1 = this.accountClient.updateAccount(
-            AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
+                AuthConstant.AUTHORIZATION_AUTHENTICATED_USER, accountDto);
         log.info(genericAccountResponse1.toString());
         assertThat(genericAccountResponse1.isSuccess()).isTrue();
         accountDto = genericAccountResponse1.getAccount();
@@ -566,14 +571,57 @@ public class AccountControllerTest {
         assertThat(emailRequest.getTo()).isEqualTo(updatedEmail);
         assertThat(emailRequest.getSubject()).isEqualTo(subject);
         assertThat(emailRequest.getName()).isEqualTo(updateName);
-        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/")).isEqualTo(3);
+        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), "http://www." + externalApex + "/activate/"))
+                .isEqualTo(3);
         assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), updateName)).isEqualTo(1);
         assertThat(emailRequest.getHtmlBody()).startsWith("<div>Hi");
 
     }
 
+    @Test
+    public void testUpdateAccount() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("message sent").build());
+        when(this.botClient.sendSmsGreeting(any(GreetingRequest.class)))
+                .thenReturn(BaseResponse.builder().message("sms sent").build());
+
+        // create first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        AccountDto accountDto = genericAccountResponse.getAccount();
+
+        // update
+        accountDto.setName("testAccountUpdate");
+        accountDto.setConfirmedAndActive(true);
+        accountDto.setPhoneNumber("18612341122");
+        GenericAccountResponse genericAccountResponse1 = this.accountClient
+                .updateAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE, accountDto);
+        log.info(genericAccountResponse1.toString());
+        assertThat(genericAccountResponse1.isSuccess()).isTrue();
+        AccountDto updatedAccountDto = genericAccountResponse1.getAccount();
+        assertThat(updatedAccountDto).isEqualTo(accountDto);
+
+        // capture and verify
+        ArgumentCaptor<GreetingRequest> argGreetingRequest = ArgumentCaptor.forClass(GreetingRequest.class);
+        verify(this.botClient, times(1)).sendSmsGreeting(argGreetingRequest.capture());
+        GreetingRequest greetingRequest = argGreetingRequest.getValue();
+        assertThat(greetingRequest.getUserId()).isEqualTo(accountDto.getId());
+    }
+
     @After
-    public void destory() {
+    public void destroy() {
         this.accountRepo.deleteAll();
     }
 }
