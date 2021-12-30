@@ -821,6 +821,96 @@ public class AccountControllerTest {
         assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.NOT_FOUND);
     }
 
+    @Test
+    public void testCreateAccountSuccess() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
+
+        // first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        String subject = "Activate your Staffjoy account";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create and verify
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        AccountDto accountDto = genericAccountResponse.getAccount();
+        assertThat(accountDto.getId()).isNotNull();
+        assertThat(accountDto.getName()).isEqualTo(name);
+        assertThat(accountDto.getEmail()).isEqualTo(email);
+        assertThat(accountDto.getPhoneNumber()).isEqualTo(phoneNumber);
+        assertThat(accountDto.getPhotoUrl()).isNotNull();
+        assertThat(accountDto.getMemberSince()).isBeforeOrEqualTo(Instant.now());
+        assertThat(accountDto.isSupport()).isFalse();
+        assertThat(accountDto.isConfirmedAndActive()).isFalse();
+
+        // capture and verify
+        ArgumentCaptor<EmailRequest> argEmailRequest = ArgumentCaptor.forClass(EmailRequest.class);
+        verify(this.mailClient, times(1)).send(argEmailRequest.capture());
+        EmailRequest emailRequest = argEmailRequest.getValue();
+        assertThat(emailRequest.getTo()).isEqualTo(email);
+        assertThat(emailRequest.getSubject()).isEqualTo(subject);
+        assertThat(emailRequest.getName()).isEqualTo(name);
+        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(),
+                "http://www." + this.envConfig.getExternalApex() + "/activate")).isEqualTo(3);
+        assertThat(StringUtils.countMatches(emailRequest.getHtmlBody(), name)).isEqualTo(1);
+        assertThat(emailRequest.getHtmlBody()).startsWith("<div><p>Hi");
+    }
+
+    @Test
+    public void testCreateAccountDuplicate() {
+        // arrange mock
+        when(this.mailClient.send(any(EmailRequest.class)))
+                .thenReturn(BaseResponse.builder().message("email sent").build());
+
+        // first account
+        String name = "testAccount001";
+        String email = "test001@staffjoy.xyz";
+        String phoneNumber = "18012344321";
+        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+                .name(name)
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        // create and verify
+        GenericAccountResponse genericAccountResponse = this.accountClient.createAccount(
+                AuthConstant.AUTHORIZATION_WWW_SERVICE, createAccountRequest);
+        assertThat(genericAccountResponse.isSuccess()).isTrue();
+
+        // email duplicate
+        createAccountRequest = CreateAccountRequest.builder()
+                .name("testAccount002")
+                .email(email)
+                .phoneNumber(phoneNumber)
+                .build();
+        genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.FAILURE);
+
+        // phone number duplicate
+        createAccountRequest = CreateAccountRequest.builder()
+                .name("testAccount002")
+                .email("test002@staffjoy.xyz")
+                .phoneNumber(phoneNumber)
+                .build();
+        genericAccountResponse = this.accountClient.createAccount(AuthConstant.AUTHORIZATION_WWW_SERVICE,
+                createAccountRequest);
+        log.info(genericAccountResponse.toString());
+        assertThat(genericAccountResponse.isSuccess()).isFalse();
+        assertThat(genericAccountResponse.getCode()).isEqualTo(ResultCode.FAILURE);
+
+    }
+
     @After
     public void destroy() {
         this.accountRepo.deleteAll();
