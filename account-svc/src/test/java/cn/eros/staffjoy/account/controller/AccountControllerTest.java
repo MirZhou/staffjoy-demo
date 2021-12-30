@@ -3,9 +3,7 @@ package cn.eros.staffjoy.account.controller;
 import cn.eros.staffjoy.account.TestConfig;
 import cn.eros.staffjoy.account.client.AccountClient;
 import cn.eros.staffjoy.account.dto.*;
-import cn.eros.staffjoy.account.model.Account;
 import cn.eros.staffjoy.account.repo.AccountRepo;
-import cn.eros.staffjoy.account.repo.AccountSecretRepo;
 import cn.eros.staffjoy.bot.client.BotClient;
 import cn.eros.staffjoy.bot.dto.GreetingRequest;
 import cn.eros.staffjoy.common.api.BaseResponse;
@@ -54,11 +52,6 @@ public class AccountControllerTest {
 
     @Autowired
     private AccountRepo accountRepo;
-
-    @Autowired
-    private AccountSecretRepo accountSecretRepo;
-
-    private Account newAccount;
 
     @Before
     public void setUp() {
