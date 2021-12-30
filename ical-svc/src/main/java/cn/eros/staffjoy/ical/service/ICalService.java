@@ -1,6 +1,5 @@
 package cn.eros.staffjoy.ical.service;
 
-import cn.eros.staffjoy.common.env.EnvConfig;
 import cn.eros.staffjoy.common.error.ServiceException;
 import cn.eros.staffjoy.company.client.CompanyClient;
 import cn.eros.staffjoy.company.dto.*;
@@ -29,9 +28,6 @@ public class ICalService {
 
     @Autowired
     private SentryClient sentryClient;
-
-    @Autowired
-    private EnvConfig envConfig;
 
     public Cal getCalByUserId(String userId) {
         GenericWorkerResponse workerResponse = null;

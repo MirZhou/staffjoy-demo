@@ -7,8 +7,6 @@ import cn.eros.staffjoy.common.auth.Authorize;
 import cn.eros.staffjoy.company.dto.*;
 import cn.eros.staffjoy.company.service.PermissionService;
 import cn.eros.staffjoy.company.service.ShiftService;
-import com.github.structlog4j.ILogger;
-import com.github.structlog4j.SLoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/company/shift")
 @Validated
 public class ShiftController {
-    private static final ILogger LOGGER = SLoggerFactory.getLogger(ShiftController.class);
-
     @Autowired
     private PermissionService permissionService;
 
