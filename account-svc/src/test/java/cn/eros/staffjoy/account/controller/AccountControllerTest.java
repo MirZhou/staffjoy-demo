@@ -892,7 +892,7 @@ public class AccountControllerTest {
 
         // phone number duplicate
         createAccountRequest = CreateAccountRequest.builder()
-                .name("testAccount002")
+                .name("testAccount003")
                 .email("test002@staffjoy.xyz")
                 .phoneNumber(phoneNumber)
                 .build();
