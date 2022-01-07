@@ -1,0 +1,18 @@
+# application.yml
+
+spring:
+  application:
+    name: bot-service
+
+staffjoy:
+  common:
+    # mock for test
+    sentry-dsn: ${SENTRY_DSN:https://6250aaa013c34817bfb36b6929ef76e9@sentry.io/6081802}
+    deploy-env: ${DEPLOY:V2}
+  email-service-endpoint: http://email-service
+  sms-service-endpoint: http://sms-service
+  company-service-endpoint: http://company-service
+  # for testing only
+  bot-service-endpoint: http://localhost:8080
+  account-service-endpoint: http://account-service
+  force-email-preference: ${FORCE_EMAIL_PREFERENCE:true}
