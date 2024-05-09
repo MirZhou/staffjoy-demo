@@ -6,7 +6,7 @@
     <groupId>cn.eros.staffjoy</groupId>
     <artifactId>staffjoy-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>${revision}</version>
     <name>Staff Joy MicroServices Training Project</name>
 
     <properties>
@@ -15,6 +15,7 @@
         <spring.boot.version>2.2.2.RELEASE</spring.boot.version>
         <spring.cloud.version>Greenwich.RELEASE</spring.cloud.version>
         <springfox.version>3.0.0</springfox.version>
+        <revision>1.0-SNAPSHOT</revision>
     </properties>
 
     <modules>
