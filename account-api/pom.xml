@@ -12,7 +12,6 @@
 
     <artifactId>account-api</artifactId>
     <name>account-api</name>
-    <version>1.0.0</version>
     <description>Account API/DTO from sharing between Client/Server</description>
 
     <dependencies>

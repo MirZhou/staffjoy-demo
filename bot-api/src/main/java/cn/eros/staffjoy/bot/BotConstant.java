@@ -31,9 +31,14 @@ public class BotConstant {
 
     public static final String SMS_START_TIME_FORMAT = "EEE dd/MM hh:mm a";
     public static final String SMS_STOP_TIME_FORMAT = "EEE dd/MM hh:mm a";
-    public static final String SMS_SHIFT_FORMAT = "%s - %s"; // print in start and stop
+    /**
+     * print in start and stop
+     */
+    public static final String SMS_SHIFT_FORMAT = "%s - %s";
 
-    // ShiftWindow is the number of days out the bot will inform the worker
-    // of their schedule
+    /**
+     * ShiftWindow is the number of days out the bot will inform the worker
+     * of their schedule
+     */
     public static final int SHIFT_WINDOW = 10;
 }

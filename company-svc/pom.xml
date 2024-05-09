@@ -12,7 +12,7 @@
 
     <artifactId>company-svc</artifactId>
     <name>company-svc</name>
-    <version>1.0.0</version>
+
 
     <dependencies>
         <dependency>
@@ -30,17 +30,17 @@
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>company-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>account-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>bot-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

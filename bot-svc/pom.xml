@@ -12,34 +12,46 @@
 
     <artifactId>bot-svc</artifactId>
     <name>bot-svc</name>
-    <version>1.0.0</version>
+
 
     <dependencies>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
+            <artifactId>common-lib</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.eros.staffjoy</groupId>
             <artifactId>bot-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>account-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>company-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>mail-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>sms-api</artifactId>
-            <version>1.0.0</version>
+
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

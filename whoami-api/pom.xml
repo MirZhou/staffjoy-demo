@@ -12,7 +12,6 @@
 
     <artifactId>whoami-api</artifactId>
     <name>whoami-api</name>
-    <version>1.0.0</version>
 
     <dependencies>
         <dependency>
@@ -22,7 +21,6 @@
         <dependency>
             <groupId>cn.eros.staffjoy</groupId>
             <artifactId>company-api</artifactId>
-            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
