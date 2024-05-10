@@ -22,6 +22,7 @@
 
     <modules>
         <module>common-lib</module>
+        <module>faraday</module>
     </modules>
 
     <dependencyManagement>
