@@ -9,7 +9,6 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>cn.eros.staffjoy.common</groupId>
     <artifactId>common-lib</artifactId>
 
     <dependencies>
